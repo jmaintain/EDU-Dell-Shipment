@@ -111,10 +111,11 @@ if uploaded_file is not None:
                 options=df_final['Status'].unique(),
                 default=None
             )
-            
+
             if status_filter:
                 df_final = df_final[df_final['Status'].isin(status_filter)]
-            
+                st.success(f"✅ Showing {len(df_final)} orders matching selected status filter")
+
             # Display table
             st.dataframe(
                 df_final,
