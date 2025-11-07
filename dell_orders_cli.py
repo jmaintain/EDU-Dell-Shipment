@@ -21,10 +21,18 @@ def process_dell_orders(input_file, output_file=None):
         df = pd.read_excel(input_file)
     
     print(f"✅ Loaded {len(df)} total rows")
-    
+
     # Filter for Service Tag Quantity = 1
     df_filtered = df[df['Service Tag Quantity'] == 1.0].copy()
-    print(f"🔍 Filtered to {len(df_filtered)} orders with Service Tag Quantity = 1")
+
+    # Parse Order Date and filter for 10/30/2025
+    if 'Order Date' in df_filtered.columns:
+        df_filtered['Order Date'] = pd.to_datetime(df_filtered['Order Date'], errors='coerce')
+        target_date = pd.to_datetime('10/30/2025')
+        df_filtered = df_filtered[df_filtered['Order Date'].dt.date == target_date.date()].copy()
+        print(f"🔍 Filtered to {len(df_filtered)} orders with Service Tag Quantity = 1 and Order Date = 10/30/2025")
+    else:
+        print(f"🔍 Filtered to {len(df_filtered)} orders with Service Tag Quantity = 1")
     
     if len(df_filtered) == 0:
         print("⚠️  No orders found with Service Tag Quantity = 1")

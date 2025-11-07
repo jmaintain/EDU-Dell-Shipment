@@ -30,11 +30,19 @@ if uploaded_file is not None:
             df = pd.read_excel(uploaded_file)
         
         st.success(f"✅ File loaded successfully! Total rows: {len(df)}")
-        
-        # Filter for Service Tag Quantity = 1
+
+        # Filter for Service Tag Quantity = 1 AND Order Date = 10/30/2025
         df_filtered = df[df['Service Tag Quantity'] == 1.0].copy()
-        
-        st.info(f"📊 Filtered to {len(df_filtered)} orders with Service Tag Quantity = 1")
+
+        # Parse Order Date and filter for 10/30/2025
+        if 'Order Date' in df_filtered.columns:
+            df_filtered['Order Date'] = pd.to_datetime(df_filtered['Order Date'], errors='coerce')
+            target_date = pd.to_datetime('10/30/2025')
+            df_filtered = df_filtered[df_filtered['Order Date'].dt.date == target_date.date()].copy()
+
+            st.info(f"📊 Filtered to {len(df_filtered)} orders with Service Tag Quantity = 1 and Order Date = 10/30/2025")
+        else:
+            st.info(f"📊 Filtered to {len(df_filtered)} orders with Service Tag Quantity = 1")
         
         if len(df_filtered) > 0:
             # Select only the columns you need
@@ -103,10 +111,11 @@ if uploaded_file is not None:
                 options=df_final['Status'].unique(),
                 default=None
             )
-            
+
             if status_filter:
                 df_final = df_final[df_final['Status'].isin(status_filter)]
-            
+                st.success(f"✅ Showing {len(df_final)} orders matching selected status filter")
+
             # Display table
             st.dataframe(
                 df_final,
