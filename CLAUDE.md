@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Dell Laptop Orders Tracker - A Streamlit web application for filtering and tracking Dell laptop orders. The application filters Dell order files for orders with Service Tag Quantity = 1 and presents them in a clean, exportable format.
+Dell Laptop Orders Tracker - A Streamlit web application for filtering and tracking Dell laptop orders. The application filters Dell order files for orders with Service Tag Quantity = 1 and Order Date = 10/30/2025, and presents them in a clean, exportable format.
 
 ## Architecture
 
@@ -13,7 +13,7 @@ This is a simple Python application with two main components:
 1. **dell_orders_app.py** - Streamlit web interface for interactive filtering and downloading
 2. **dell_orders_cli.py** - Command-line tool for batch processing and terminal-based reports
 
-Both share the same core logic: filter Dell orders by Service Tag Quantity = 1, combine ship dates (preferring Actual > Revised > Estimated), and present selected columns in a clean format.
+Both share the same core logic: filter Dell orders by Service Tag Quantity = 1 and Order Date = 10/30/2025, combine ship dates (preferring Actual > Revised > Estimated), and present selected columns in a clean format.
 
 ## Development Commands
 
@@ -54,6 +54,7 @@ pip install -r requirements.txt
 
 Dell order files (Excel or CSV) must contain these columns:
 - Service Tag Quantity (filtering column)
+- Order Date (filtering column - must be 10/30/2025)
 - Ship To Customer
 - Ship To Contact
 - Service Tag
@@ -71,7 +72,13 @@ The application combines three date fields into one "Ship Date" using this prior
 2. Revised Ship Date(RSD) (if Actual not present)
 3. Estimated Ship Date(ESD) (if neither Actual nor Revised present)
 
-This logic is implemented identically in both [dell_orders_app.py:57-61](dell_orders_app.py#L57-L61) and [dell_orders_cli.py:49-53](dell_orders_cli.py#L49-L53).
+### Filtering Logic
+
+The application applies two built-in filters:
+1. **Service Tag Quantity = 1** - Only orders with exactly 1 service tag
+2. **Order Date = 10/30/2025** - Only orders placed on October 30, 2025
+
+These filters are applied in [dell_orders_app.py:34-45](dell_orders_app.py#L34-L45) and [dell_orders_cli.py:25-35](dell_orders_cli.py#L25-L35).
 
 ### Output Format
 
